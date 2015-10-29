@@ -1,0 +1,54 @@
+<template>
+    <section>
+        <h2>${heading}</h2>
+		<div>
+			<p>
+					<!--<button class="btn btn-danger" type="button"></button>
+					<button class="btn btn-success" type="button"></button>
+					<button class="btn btn-info disabled" type="button"></button>
+					<button class="btn btn-primary" type="button"></button>
+					<button class="btn btn-default" type="button"></button>-->
+				<button repeat.for="chance of chances" class.bind="chance.className" type="button"></button>
+			</p>
+		</div>
+		<form role="form" submit.delegate="submitGuess()">
+			<div class="row">
+			  <div class="col-sm-6 col-md-3">
+				<p class="help-block">${soloToGuessLabelText}</p>
+				<audio id="audioElement" controls >
+					<!--<source type='audio/mpeg' src='solos/RSFMH.mp3'>-->
+				  <source type="audio/ogg" src.two-way="soloToGuessOgg">
+				  <source type="audio/mpeg" src.two-way="soloToGuess">
+				  Your browser does not support the <code>video</code> element.
+				</audio>
+			  </div>
+			</div>
+			<div class="row">
+			  <div class="col-sm-6 col-md-3">
+				<p class="help-block">${artistLabelText}</p>
+				<select class="selectpicker" style="min-width:180px;" value.two-way="selectedArtist" change.trigger="onSelectedArtistChanged()">
+				  <option repeat.for="artist of artists" value.bind="artist.id">${artist.name}</option>
+				</select>
+			  </div>
+			  <div class="col-sm-6 col-md-3">
+				<p class="help-block">${songLabelText}</p>
+				<select class="selectpicker" style="min-width:180px;" value.two-way="selectedSong">
+				  <option repeat.for="song of songs" value.bind="song.id">${song.name}</option>
+				</select>
+			  </div>
+			</div>
+			<div class="row" style="padding-top:30px;">
+			  <div class="col-sm-3">
+				<button type="submit" class="btn btn-default">${guessButtonLabelText}</button>
+			  </div>
+			  <div class="col-sm-3">
+				<button type="button" click.trigger="onNextButtonClicked()" class="btn btn-default">${nextButtonLabelText}</button>
+			  </div>
+			</div>
+			<div class="row" style="padding-top:30px;">
+			  <label>Current Song</label>
+			  <p class="help-block">${soloToGuessArtistAndSong}</p>
+			</div>
+        </form>
+    </section>
+</template>
