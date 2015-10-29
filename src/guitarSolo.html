@@ -8,7 +8,8 @@
 					<button class="btn btn-info disabled" type="button"></button>
 					<button class="btn btn-primary" type="button"></button>
 					<button class="btn btn-default" type="button"></button>-->
-				<button repeat.for="chance of chances" class.bind="chance.className" type="button"></button>
+				<button repeat.for="chance of chances" class.bind="chance.className" innerHTML.bind="chance.points" type="button"></button>
+				<button innerHTML.bind="totalPoints" class="btn btn-primary" type="button"></button>
 			</p>
 		</div>
 		<form role="form" submit.delegate="submitGuess()">

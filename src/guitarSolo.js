@@ -4,36 +4,47 @@ import {HttpClient} from 'aurelia-http-client';
 @inject(HttpClient)
 export class GuitarSolo{
   heading = 'Guitar Solo';
+  totalPoints = 0;
   chances = [
     {
       id: 1,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
       className: "btn btn-info"
     },{
       id: 2,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
       className: "btn btn-default disabled"
     },{
       id: 3,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
       className: "btn btn-default disabled"
     },{
       id: 4,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
       className: "btn btn-default disabled"
     },{
       id: 5,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
       className: "btn btn-default disabled"
     }
   ];
@@ -112,9 +123,20 @@ export class GuitarSolo{
             chance.userHasMadeAGuess = true;
             if (response.content.result === 0){
               chance.guessIsCorrect = true;
+              chance.points = 7;
+              this.totalPoints = this.totalPoints + 7;
               className = "btn btn-success";
             } else {
-              className = "btn btn-danger";
+              if (response.content.result === -1){
+                  chance.guessIsPartiallyCorrect = true;
+                  chance.points = 3;
+                  this.totalPoints = this.totalPoints + 3;
+                  className = "btn btn-warning";  
+              } else {
+                if (response.content.result === 1){
+                  className = "btn btn-danger";  
+                }
+              }
             }
             chance.className = className;
             if (index < chancesLength) {
