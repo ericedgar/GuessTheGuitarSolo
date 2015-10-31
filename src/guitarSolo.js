@@ -235,11 +235,14 @@ export class GuitarSolo{
    var chance;
    var className;
 
+   this.totalPoints = 0;
    chancesLength = this.chances.length;
    for (index = 0; index < chancesLength; index++) {
     chance = this.chances[index];
     chance.userHasMadeAGuess = false;
     chance.guessIsCorrect = false;
+    chance.guessIsPartiallyCorrect = false;
+    chance.points = 0;
     if (index === 0){
       className = "btn btn-info";
     } else {
