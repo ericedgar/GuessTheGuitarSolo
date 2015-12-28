@@ -3,9 +3,13 @@ import {HttpClient} from 'aurelia-http-client';
 
 @inject(HttpClient)
 export class GuitarSolo{
-  heading = 'Guitar Solo';
+  heading = 'Guess The Guitar Solo';
   totalPoints = 0;
-  chances = [
+  chanceLevel2IsVisible = false;
+  chanceLevel3IsVisible = false;
+  allLevelsComplete = false;
+  isButtonsDisabled = false;
+  chancesLevel1 = [
     {
       id: 1,
       soloToGuessId: -1,
@@ -13,32 +17,32 @@ export class GuitarSolo{
       guessIsCorrect: false,
       guessIsPartiallyCorrect: false,
       points: 0,
-      className: "btn btn-info"
-    },{
+      className: "btn btn-info"},
+    {
       id: 2,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
       guessIsPartiallyCorrect: false,
       points: 0,
-      className: "btn btn-default disabled"
-    },{
+      className: "btn btn-default disabled"},
+    {
       id: 3,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
       guessIsPartiallyCorrect: false,
       points: 0,
-      className: "btn btn-default disabled"
-    },{
+      className: "btn btn-default disabled"},
+    {
       id: 4,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
       guessIsCorrect: false,
       guessIsPartiallyCorrect: false,
       points: 0,
-      className: "btn btn-default disabled"
-    },{
+      className: "btn btn-default disabled"},
+    {
       id: 5,
       soloToGuessId: -1,
       userHasMadeAGuess: false,
@@ -48,6 +52,95 @@ export class GuitarSolo{
       className: "btn btn-default disabled"
     }
   ];
+  
+  chancesLevel2 = [
+    {
+      id: 1,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-info"},
+    {
+      id: 2,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 3,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 4,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 5,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"
+    }
+  ];
+  
+  chancesLevel3 = [
+    {
+      id: 1,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-info"},
+    {
+      id: 2,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 3,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 4,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"},
+    {
+      id: 5,
+      soloToGuessId: -1,
+      userHasMadeAGuess: false,
+      guessIsCorrect: false,
+      guessIsPartiallyCorrect: false,
+      points: 0,
+      className: "btn btn-default disabled"
+    }
+  ];
+  
   artists = [];
   songs = [];
   soloToGuessOgg = "";
@@ -58,9 +151,14 @@ export class GuitarSolo{
   songLabelText = "";
   guessButtonLabelText = "";
   nextButtonLabelText = "";
+  startOverButtonLabelText = "";
   selectedArtist: "";
   previouslySelectedArtist: "";
   selectedSong: "";
+  totalPointsLabelText: "";
+  level1LabelText: "";
+  level2LabelText: "";
+  level3LabelText: "";
   url = 'http://localhost:9001/getSongsByArtist';
 
   constructor(http){
@@ -94,10 +192,69 @@ export class GuitarSolo{
 	  }
   }
   
+  getLevelGuessCount(level) {
+    var chancesLength;
+    var index;
+    var chance;
+    var levelGuessCount;
+    var chancesLevelToUse;
+    
+    chancesLevelToUse = this.getChancesByLevel(level);
+    
+    levelGuessCount = 0;
+    chancesLength = chancesLevelToUse.length;
+    for (index = 0; index < chancesLength; index++) {
+      chance = chancesLevelToUse[index];
+      if (chance.userHasMadeAGuess === true) {
+        levelGuessCount += 1;
+      }
+    }
+    
+    return levelGuessCount;
+
+  }
+  
+  getLevel() {
+    var level;
+    var level1GuessCount;
+    var level2GuessCount;
+    
+    level1GuessCount = this.getLevelGuessCount(1);
+    if (level1GuessCount === 5) {
+      level2GuessCount = this.getLevelGuessCount(2);
+      if (level2GuessCount === 5) {
+        level = 3;        
+      } else {
+        level = 2;
+      }
+    } else {
+      level = 1;
+    }
+    
+    return level;
+  }
+  
+  areAllLevelsComplete() {
+    var level3GuessCount;
+    var returnValue;
+    
+    level3GuessCount = this.getLevelGuessCount(3);
+    if (level3GuessCount === 5) {
+      returnValue = true;
+    } else {
+      returnValue = false;
+      
+    }
+    
+    return returnValue;
+  }
+  
   submitGuess(){
     var artistId;
     var songId;
     var soloToGuessId;
+    
+    this.isButtonsDisabled = true;
     
     artistId = this.selectedArtist;
     songId = this.selectedSong;
@@ -114,23 +271,32 @@ export class GuitarSolo{
         var chancesLength;
         var chance;
         var className;
+        var chancesLevelToGrade;
+        var levelCorrectMultiplier;
+        var levelPartialCorrectMultiplier;
+        var level;
         
-        chancesLength = this.chances.length;
+        level = this.getLevel();
+        chancesLevelToGrade = this.getChancesByLevel(level);
+        levelCorrectMultiplier = (level - 1) * 2;
+        levelPartialCorrectMultiplier = (level - 1) * 1;
+        
+        chancesLength = chancesLevelToGrade.length;
         for (index = 0; index < chancesLength; index++) {
-          chance = this.chances[index];
+          chance = chancesLevelToGrade[index];
           if (chance.userHasMadeAGuess === true){
           } else {
             chance.userHasMadeAGuess = true;
             if (response.content.result === 0){
               chance.guessIsCorrect = true;
-              chance.points = 7;
-              this.totalPoints = this.totalPoints + 7;
+              chance.points = 7 + levelCorrectMultiplier;
+              this.totalPoints = this.totalPoints + chance.points;
               className = "btn btn-success";
             } else {
               if (response.content.result === -1){
                   chance.guessIsPartiallyCorrect = true;
-                  chance.points = 3;
-                  this.totalPoints = this.totalPoints + 3;
+                  chance.points = 3 + levelPartialCorrectMultiplier;
+                  this.totalPoints = this.totalPoints + chance.points;
                   className = "btn btn-warning";  
               } else {
                 if (response.content.result === 1){
@@ -140,7 +306,9 @@ export class GuitarSolo{
             }
             chance.className = className;
             if (index < chancesLength) {
-              this.chances[index + 1].className = "btn btn-info";
+              if (chancesLevelToGrade[index + 1]) {
+                chancesLevelToGrade[index + 1].className = "btn btn-info";                
+              }
             }
             break;
           }
@@ -148,8 +316,42 @@ export class GuitarSolo{
         this.selectedArtist = "";
         this.selectedSong = "";
         this.songs = [];
-        this.getNextSongToGuess();
+        if (this.areAllLevelsComplete()) {
+          this.allLevelsComplete = true;
+        } else {
+          this.getNextSongToGuess();
+        }
+        
       });
+  }
+
+  getCurrentChancesLevel() {
+    var level;
+    var returnValue;
+    
+    level = this.getLevel();
+    returnValue = this.getChancesByLevel(level);
+    
+    return returnValue;
+  }
+  
+  getChancesByLevel(level) {
+    var returnValue;
+
+    switch (level){
+      case 1:
+        returnValue = this.chancesLevel1;
+        break;
+      case 2:
+        returnValue = this.chancesLevel2;
+        break;
+      case 3:
+        returnValue = this.chancesLevel3;
+        break;
+      default:
+    }
+    
+    return returnValue;
   }
 
   activate(){
@@ -163,19 +365,37 @@ export class GuitarSolo{
         //this.soloToGuess = "<source type='audio/mpeg' src='solos/" + soloToGuessFile + ".mp3'>";
         this.soloToGuessOgg = response.content.soloToGuessFile.concat(".ogg");
         this.soloToGuessId = response.content.soloToGuessId;
-	      this.soloToGuessLabelText = "Guess The Solo";
+	      this.soloToGuessLabelText = "Guess The Guitar Solo";
   	    this.artistLabelText = "Artist";
   	    this.songLabelText = "Song";
 	      this.guessButtonLabelText = "Guess";
         this.nextButtonLabelText = "Next";
+        this.startOverButtonLabelText = "Start Over";
+        this.totalPointsLabelText = "Total Points:";
+        this.level1LabelText = "Level 1";
+        this.level2LabelText = "Level 2";
+        this.level3LabelText = "Level 3";
         this.soloToGuessArtistAndSong = response.content.soloToGuessArtistAndSong;
         this.onNextButtonClicked = function onNextButtonClicked() {
-                                     this.resetChances();
                                      this.selectedArtist = "";
                                      this.selectedSong = "";
                                      this.songs = [];
                                      this.getNextSongToGuess();
                                    };
+                                   
+        this.onStartOverButtonClicked = function onStartOverButtonClicked() {
+                                     this.resetChances();
+                                     this.selectedArtist = "";
+                                     this.selectedSong = "";
+                                     this.songs = [];
+                                     
+                                     this.chanceLevel2IsVisible = false;
+                                     this.chanceLevel3IsVisible = false;
+                                     this.allLevelsComplete = false;
+                                     
+                                     this.getNextSongToGuess();
+                                   };
+                                   
         this.onSelectedArtistChanged = function onSelectedArtistChanged() {
                                           this.getSongsByArtistId();
                                         };
@@ -201,11 +421,24 @@ export class GuitarSolo{
   }
   
   getNextSongToGuess(){
+    var level;
+    
+    level = this.getLevel();
+    if (level === 2) {
+      this.chanceLevel2IsVisible = true;
+    } else {
+      if (level === 3) {
+        this.chanceLevel3IsVisible = true;
+      }
+    }
+    
  	  this.url = 'http://localhost:9001/initialData';
-    this.url = this.url.concat("?sessionId=", this.uId);
+    this.url = this.url.concat("?sessionId=", this.uId, "&level=", String(level));
     return this.http.jsonp(this.url).then(response => {
         var soloToGuessFile;
         var audioElement;
+        var enableButtonsFunc;
+                
         //this.artists = response.content.artists;
         soloToGuessFile = response.content.soloToGuessFile;
 	      this.soloToGuess = response.content.soloToGuessFile.concat(".mp3");
@@ -217,7 +450,7 @@ export class GuitarSolo{
         this.soloToGuessArtistAndSong = response.content.soloToGuessArtistAndSong;
         if (audioElement) {
           setTimeout(function(){
-            audioElement.load();  
+            //audioElement.load();  
             audioElement.load(); 
           }, 300);
         }
@@ -226,30 +459,48 @@ export class GuitarSolo{
   	    // this.songLabelText = "Song";
 	      // this.guessButtonLabelText = "Guess";
         // this.nextButtonLabelText = "Next2";
+        
+        enableButtonsFunc = function(){
+          this.isButtonsDisabled = false;
+        };
+        
+        setTimeout(enableButtonsFunc.bind(this), 500);
+        
       });
   }
   
   resetChances(){
-   var index;
-   var chancesLength;
-   var chance;
-   var className;
+    var index;
+    var chancesLength;
+    var chance;
+    var className;
+    var levelIndex;
+    var numberOfLevels;
+    var level;
+    var chancesLevelToUse;   
 
-   this.totalPoints = 0;
-   chancesLength = this.chances.length;
-   for (index = 0; index < chancesLength; index++) {
-    chance = this.chances[index];
-    chance.userHasMadeAGuess = false;
-    chance.guessIsCorrect = false;
-    chance.guessIsPartiallyCorrect = false;
-    chance.points = 0;
-    if (index === 0){
-      className = "btn btn-info";
-    } else {
-      className = "btn btn-default disabled";
-    }
-    chance.className = className;
+    this.totalPoints = 0;
+    numberOfLevels = 3;
+    for (levelIndex = 0; levelIndex < numberOfLevels; levelIndex++) {
+      level = levelIndex + 1;
+      chancesLevelToUse = this.getChancesByLevel(level);
     
-   }
+      chancesLength = chancesLevelToUse.length;
+      for (index = 0; index < chancesLength; index++) {
+        chance = chancesLevelToUse[index];
+        chance.userHasMadeAGuess = false;
+        chance.guessIsCorrect = false;
+        chance.guessIsPartiallyCorrect = false;
+        chance.points = 0;
+        if (index === 0){
+          className = "btn btn-info";
+        } else {
+          className = "btn btn-default disabled";
+        }
+        chance.className = className;
+        
+      }
+
+    }
   }
 }
