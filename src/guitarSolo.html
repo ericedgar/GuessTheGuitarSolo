@@ -35,26 +35,30 @@
 				<div class="row">
 					<div class="col-sm-3">
 						<p class="help-block">${artistLabelText}</p>
-						<select class="selectpicker" style="min-width:180px;" value.two-way="selectedArtist" change.trigger="onSelectedArtistChanged()">
+						<input type="text" placeholder.bind="searchPlaceholderText" input.trigger="onSearchArtistChanged()" value.two-way="searchValue">
+						<button class="btn btn-warning btn-xs glyphicon glyphicon-remove" innerHTML.bind="clearButtonText" type="button" click.trigger="onClearButtonClicked()" ></button>
+						<button class="btn btn-warning btn-xs glyphicon glyphicon-sort-by-alphabet" innerHTML.bind="sortButtonText" type="button" click.trigger="onSortButtonClicked()" >
+						</button>
+						<select size="13" class="selectpicker" style="min-width:180px;" value.two-way="selectedArtist" change.trigger="onSelectedArtistChanged()">
 						<option repeat.for="artist of artists" value.bind="artist.id">${artist.name}</option>
 						</select>
 					</div>
 					<div class="col-sm-4">
 						<p class="help-block">${songLabelText}</p>
-						<select class="selectpicker" style="min-width:180px;" value.two-way="selectedSong">
+						<select size.bind="songSelectSize" class="selectpicker" style="min-width:180px;" value.two-way="selectedSong">
 						<option repeat.for="song of songs" value.bind="song.id">${song.name}</option>
 						</select>
 					</div>
 				</div>
 				<div class="row" style="padding-top:30px;">
 					<div class="col-sm-3">
-						<button type="submit" disabled.two-way="isButtonsDisabled" class="btn btn-default">${guessButtonLabelText}</button>
+						<button type="button" click.trigger="onGiveUpButtonClicked()" disabled.two-way="isButtonsDisabled" class="btn btn-default">${giveUpButtonLabelText}</button>
 					</div>
 					<div class="col-sm-4">
-						<button type="button" click.trigger="onNextButtonClicked()" disabled.two-way="isButtonsDisabled" class="btn btn-default">${nextButtonLabelText}</button>
+						<button type="submit" disabled.two-way="isButtonsDisabled" class="btn btn-default">${guessButtonLabelText}</button>					
 					</div>
 				</div>
-				<div class="row" style="padding-top:30px;">
+				<div class="row hidden" style="padding-top:30px;">
 					<label>Current Song</label>
 					<p class="help-block">${soloToGuessArtistAndSong}</p>
 				</div>

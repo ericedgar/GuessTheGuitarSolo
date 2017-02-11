@@ -142,6 +142,7 @@ export class GuitarSolo{
   ];
   
   artists = [];
+  originalArtists = [];
   songs = [];
   soloToGuessOgg = "";
   soloToGuess = "";
@@ -149,16 +150,23 @@ export class GuitarSolo{
   soloToGuessLabelText = "";
   artistLabelText = "";
   songLabelText = "";
+  songSelectSize = 2;
   guessButtonLabelText = "";
-  nextButtonLabelText = "";
+  giveUpButtonLabelText = "";
   startOverButtonLabelText = "";
   selectedArtist: "";
   previouslySelectedArtist: "";
   selectedSong: "";
+  searchValue: "";
+  searchPlaceholderText: "";
+  clearButtonText: "";
+  sortButtonText: "";
   totalPointsLabelText: "";
   level1LabelText: "";
   level2LabelText: "";
   level3LabelText: "";
+  selectArtistValidationText = "";
+  selectSongValidationText = "";
   url = 'http://localhost:9001/getSongsByArtist';
 
   constructor(http){
@@ -254,10 +262,18 @@ export class GuitarSolo{
     var songId;
     var soloToGuessId;
     
-    this.isButtonsDisabled = true;
-    
     artistId = this.selectedArtist;
+    if (artistId === null || artistId === "-1" || artistId === "") {
+      alert(this.selectArtistValidationText);
+      return;
+    }
     songId = this.selectedSong;
+    if (songId === null || songId === "-1" || songId === "") {
+      alert(this.selectSongValidationText);
+      return;
+    }
+
+    this.isButtonsDisabled = true;
     soloToGuessId = this.soloToGuessId;
     
     this.url = 'http://localhost:9001/guessSong';
@@ -316,6 +332,8 @@ export class GuitarSolo{
         this.selectedArtist = "";
         this.selectedSong = "";
         this.songs = [];
+        this.artists = this.originalArtists;
+        this.searchValue = "";
         if (this.areAllLevelsComplete()) {
           this.allLevelsComplete = true;
         } else {
@@ -360,6 +378,7 @@ export class GuitarSolo{
     return this.http.jsonp(this.url).then(response => {
         var soloToGuessFile;
         this.artists = response.content.artists;
+        this.originalArtists = this.artists;
         soloToGuessFile = response.content.soloToGuessFile;
 	      this.soloToGuess = response.content.soloToGuessFile.concat(".mp3");
         //this.soloToGuess = "<source type='audio/mpeg' src='solos/" + soloToGuessFile + ".mp3'>";
@@ -369,17 +388,24 @@ export class GuitarSolo{
   	    this.artistLabelText = "Artist";
   	    this.songLabelText = "Song";
 	      this.guessButtonLabelText = "Guess";
-        this.nextButtonLabelText = "Next";
+        this.giveUpButtonLabelText = "Give Up";
         this.startOverButtonLabelText = "Start Over";
         this.totalPointsLabelText = "Total Points:";
         this.level1LabelText = "Level 1";
         this.level2LabelText = "Level 2";
         this.level3LabelText = "Level 3";
+        this.selectArtistValidationText = "Select an artist before guessing.";
+        this.selectSongValidationText = "Select a song before guessing.";
+        this.searchPlaceholderText = "Search...";
+        this.clearButtonText = "";
+        this.sortButtonText = "";
         this.soloToGuessArtistAndSong = response.content.soloToGuessArtistAndSong;
-        this.onNextButtonClicked = function onNextButtonClicked() {
+        this.onGiveUpButtonClicked = function onGiveUpButtonClicked() {
                                      this.selectedArtist = "";
                                      this.selectedSong = "";
                                      this.songs = [];
+                                     this.artists = this.originalArtists;
+                                     this.searchValue = "";
                                      this.getNextSongToGuess();
                                    };
                                    
@@ -388,6 +414,8 @@ export class GuitarSolo{
                                      this.selectedArtist = "";
                                      this.selectedSong = "";
                                      this.songs = [];
+                                     this.artists = this.originalArtists;
+                                     this.searchValue = "";
                                      
                                      this.chanceLevel2IsVisible = false;
                                      this.chanceLevel3IsVisible = false;
@@ -399,6 +427,22 @@ export class GuitarSolo{
         this.onSelectedArtistChanged = function onSelectedArtistChanged() {
                                           this.getSongsByArtistId();
                                         };
+
+        this.onSearchArtistChanged = function onSearchArtistChanged() {
+                                          this.filterArtistsBySearchValue();
+                                        };
+              
+        this.onClearButtonClicked = function onClearButtonClicked() {
+                                      this.selectedArtist = "";
+                                      this.selectedSong = "";
+                                      this.songs = [];
+                                      this.artists = this.originalArtists;
+                                      this.searchValue = "";
+                                    };
+
+        this.onSortButtonClicked = function onSortButtonClicked() {
+                                     this.reverseSortArtists();
+                                   };
       });
       
   }
@@ -407,6 +451,40 @@ export class GuitarSolo{
     //return confirm('Are you sure you want to leave?');
   }
   
+ reverseSortArtists(){
+   let foundArtistArray;
+
+   foundArtistArray = this.artists.reverse();;
+
+   this.artists = foundArtistArray;
+ }
+
+ filterArtistsBySearchValue(){
+   let artistCount;
+   let index;
+   let searchValue;
+   let artistName;
+   let foundArtistArray;
+   let artistObject;
+   
+   this.selectedArtist = "";
+   this.songs = [];
+   foundArtistArray = [];
+   artistCount = this.originalArtists.length;
+   searchValue = this.searchValue;
+   searchValue = searchValue.toLowerCase();
+   for (index = 0; index < artistCount; index++) {
+     artistObject = this.originalArtists[index];
+     artistName = artistObject.name;
+     artistName = artistName.toLowerCase();
+     if (artistName.includes(searchValue) === true) {
+       foundArtistArray.push(artistObject);
+     } 
+   }
+
+   this.artists = foundArtistArray;
+ }
+
   getSongsByArtistId(){
   var artistId;
 	  
@@ -417,6 +495,18 @@ export class GuitarSolo{
     
   return this.http.jsonp(this.url).then(response => {
       this.songs = response.content.songs;
+        let songCount;
+        let selectSize;
+        songCount = this.songs.length;
+        if (songCount < 1) {
+          songCount = 2;
+        } else {
+          if (songCount > 10) {
+            songCount = 10;
+          }
+        }
+        selectSize = songCount;
+        this.songSelectSize = selectSize;
     });
   }
   
