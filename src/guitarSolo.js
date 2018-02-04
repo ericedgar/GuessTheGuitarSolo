@@ -143,7 +143,14 @@ export class GuitarSolo{
   
   artists = [];
   originalArtists = [];
+  artistsAndSongs = [];
+  originalArtistsAndSongs = [];
   songs = [];
+  rockIsChecked = true;
+  metalIsChecked = true;
+  classicIsChecked = true;
+  oldiesIsChecked = true;
+  countryIsChecked = true;
   soloToGuessOgg = "";
   soloToGuess = "";
   soloToGuessId = -1;
@@ -154,9 +161,12 @@ export class GuitarSolo{
   guessButtonLabelText = "";
   giveUpButtonLabelText = "";
   startOverButtonLabelText = "";
+  modalTitleText = "";
+  modalMessageText = ""
   selectedArtist: "";
   previouslySelectedArtist: "";
   selectedSong: "";
+  songHasFocus: "";
   searchValue: "";
   searchPlaceholderText: "";
   clearButtonText: "";
@@ -165,7 +175,14 @@ export class GuitarSolo{
   level1LabelText: "";
   level2LabelText: "";
   level3LabelText: "";
+  rockLabelText: "";
+  metalLabelText: "";
+  classicLabelText: "";
+  oldiesLabelText: "";
+  countryLabelText: "";
+  selectArtistValidationTitle = "";
   selectArtistValidationText = "";
+  selectSongValidationTitle = "";
   selectSongValidationText = "";
   url = 'http://localhost:9001/getSongsByArtist';
 
@@ -257,19 +274,27 @@ export class GuitarSolo{
     return returnValue;
   }
   
+  showModal(title, message) {
+      this.modalTitleText = title;
+      this.modalMessageText = message;
+      let modalDiv;
+      modalDiv = document.getElementById("myModal");
+      $(modalDiv).modal('show');
+  }
+
   submitGuess(){
     var artistId;
     var songId;
     var soloToGuessId;
-    
+
     artistId = this.selectedArtist;
     if (artistId === null || artistId === "-1" || artistId === "") {
-      alert(this.selectArtistValidationText);
+      this.showModal(this.selectArtistValidationTitle, this.selectArtistValidationText);
       return;
     }
     songId = this.selectedSong;
     if (songId === null || songId === "-1" || songId === "") {
-      alert(this.selectSongValidationText);
+      this.showModal(this.selectSongValidationTitle, this.selectSongValidationText);
       return;
     }
 
@@ -292,6 +317,7 @@ export class GuitarSolo{
         var levelPartialCorrectMultiplier;
         var level;
         
+        this.clearSelected();
         level = this.getLevel();
         chancesLevelToGrade = this.getChancesByLevel(level);
         levelCorrectMultiplier = (level - 1) * 2;
@@ -304,18 +330,21 @@ export class GuitarSolo{
           } else {
             chance.userHasMadeAGuess = true;
             if (response.content.result === 0){
+              toastr.success("", "Correct: " + response.content.artistAndSongDescription);
               chance.guessIsCorrect = true;
               chance.points = 7 + levelCorrectMultiplier;
               this.totalPoints = this.totalPoints + chance.points;
               className = "btn btn-success";
             } else {
               if (response.content.result === -1){
+                  toastr.warning("", "You've selected the correct artist, but the wrong song: " + response.content.artistAndSongDescription);
                   chance.guessIsPartiallyCorrect = true;
                   chance.points = 3 + levelPartialCorrectMultiplier;
                   this.totalPoints = this.totalPoints + chance.points;
                   className = "btn btn-warning";  
               } else {
                 if (response.content.result === 1){
+                  toastr.error("", "Incorrect: " + response.content.artistAndSongDescription);
                   className = "btn btn-danger";  
                 }
               }
@@ -331,8 +360,10 @@ export class GuitarSolo{
         }
         this.selectedArtist = "";
         this.selectedSong = "";
+        this.songHasFocus = true;
         this.songs = [];
         this.artists = this.originalArtists;
+        this.artistsAndSongs = this.originalArtistsAndSongs;
         this.searchValue = "";
         if (this.areAllLevelsComplete()) {
           this.allLevelsComplete = true;
@@ -379,9 +410,16 @@ export class GuitarSolo{
         var soloToGuessFile;
         this.artists = response.content.artists;
         this.originalArtists = this.artists;
+        this.artistsAndSongs = response.content.artistsAndSongs;
+        this.originalArtistsAndSongs = this.artistsAndSongs;
         soloToGuessFile = response.content.soloToGuessFile;
 	      this.soloToGuess = response.content.soloToGuessFile.concat(".mp3");
         //this.soloToGuess = "<source type='audio/mpeg' src='solos/" + soloToGuessFile + ".mp3'>";
+        this.rockIsChecked = true;
+        this.metalIsChecked = true;
+        this.classicIsChecked = true;
+        this.oldiesIsChecked = true;
+        this.countryIsChecked = true;
         this.soloToGuessOgg = response.content.soloToGuessFile.concat(".ogg");
         this.soloToGuessId = response.content.soloToGuessId;
 	      this.soloToGuessLabelText = "Guess The Guitar Solo";
@@ -394,17 +432,26 @@ export class GuitarSolo{
         this.level1LabelText = "Level 1";
         this.level2LabelText = "Level 2";
         this.level3LabelText = "Level 3";
+        this.rockLabelText = "Rock";
+        this.metalLabelText = "Metal";
+        this.classicLabelText = "Classic";
+        this.oldiesLabelText = "Oldies";
+        this.countryLabelText = "Country";
+        this.selectArtistValidationTitle = "Select Artist";
         this.selectArtistValidationText = "Select an artist before guessing.";
+        this.selectSongValidationTitle = "Select Song";
         this.selectSongValidationText = "Select a song before guessing.";
-        this.searchPlaceholderText = "Search...";
+        this.searchPlaceholderText = "Search Artist or Song...";
         this.clearButtonText = "";
         this.sortButtonText = "";
         this.soloToGuessArtistAndSong = response.content.soloToGuessArtistAndSong;
-        this.onGiveUpButtonClicked = function onGiveUpButtonClicked() {
+        this.onGiveUpButtonClicked = function onGiveUpButtonClicked(a) {
                                      this.selectedArtist = "";
                                      this.selectedSong = "";
+                                     this.songHasFocus = true;
                                      this.songs = [];
                                      this.artists = this.originalArtists;
+                                     this.artistsAndSongs = this.originalArtistsAndSongs;
                                      this.searchValue = "";
                                      this.getNextSongToGuess();
                                    };
@@ -413,8 +460,10 @@ export class GuitarSolo{
                                      this.resetChances();
                                      this.selectedArtist = "";
                                      this.selectedSong = "";
+                                     this.songHasFocus = true;
                                      this.songs = [];
                                      this.artists = this.originalArtists;
+                                     this.artistsAndSongs = this.originalArtistsAndSongs;
                                      this.searchValue = "";
                                      
                                      this.chanceLevel2IsVisible = false;
@@ -428,20 +477,83 @@ export class GuitarSolo{
                                           this.getSongsByArtistId();
                                         };
 
+        this.onListItemClicked2 = function onListItemClicked2(key) {
+          //alert("onListItemClicked2 - key: " + key);
+          let artistAndSongCount;
+          let artistId;
+          let index;
+          let artistAndSongObject;
+          let keyArray;
+          let songId;
+
+          artistAndSongCount = this.originalArtistsAndSongs.length;
+          keyArray = key.split("|");
+          artistId = Number(keyArray[0]);
+          songId = Number(keyArray[1]);
+          this.selectedArtist = artistId;
+          this.selectedSong = songId;
+          for (index = 0; index < artistAndSongCount; index++) {
+            artistAndSongObject = this.artistsAndSongs[index];
+            if (artistId === artistAndSongObject.artistId) {
+              if (songId === artistAndSongObject.songId) {
+                artistAndSongObject.isChecked = true;
+              } else {
+                artistAndSongObject.isChecked = false;
+              }
+            } else {
+              artistAndSongObject.isChecked = false;
+            }
+          }
+
+          //this.getSongsByArtistId();
+          return true;
+        };
+
+        this.onListItemClicked = function onListItemClicked(id) {
+          //alert("onListItemClicked - id: " + id);
+          let artistCount;
+          let artistId;
+          let index;
+          let artistObject;
+          artistCount = this.originalArtists.length;
+          this.selectedArtist = id;
+          for (index = 0; index < artistCount; index++) {
+            artistObject = this.artists[index];
+            artistId = artistObject.id;
+            if (artistId === id) {
+              artistObject.isChecked = true;
+            } else {
+              artistObject.isChecked = false;
+            }
+          }
+
+          this.getSongsByArtistId();
+          return true;
+        };
+
         this.onSearchArtistChanged = function onSearchArtistChanged() {
-                                          this.filterArtistsBySearchValue();
+                                          //this.filterArtistsBySearchValue();
+                                          this.filterArtistsAndSongsBySearchValue();
                                         };
+
+        this.onGenreChanged = function onSearchArtistChanged() {
+          this.filterArtistsAndSongsBySearchValue();
+        };
               
         this.onClearButtonClicked = function onClearButtonClicked() {
+                                      this.clearSelected();
                                       this.selectedArtist = "";
                                       this.selectedSong = "";
+                                      this.songHasFocus = true;
                                       this.songs = [];
                                       this.artists = this.originalArtists;
+                                      this.artistsAndSongs = this.originalArtistsAndSongs;
                                       this.searchValue = "";
                                     };
 
         this.onSortButtonClicked = function onSortButtonClicked() {
-                                     this.reverseSortArtists();
+                                     //this.reverseSortArtists();
+                                     this.reverseSortArtistsAndSongs();
                                    };
       });
       
@@ -450,13 +562,117 @@ export class GuitarSolo{
   canDeactivate(){
     //return confirm('Are you sure you want to leave?');
   }
-  
+
+  reverseSortArtistsAndSongs(){
+    let foundArtistAndSongArray;
+ 
+    foundArtistAndSongArray = this.artistsAndSongs.reverse();;
+ 
+    this.artistsAndSongs = foundArtistAndSongArray;
+  }
+
  reverseSortArtists(){
    let foundArtistArray;
 
    foundArtistArray = this.artists.reverse();;
 
    this.artists = foundArtistArray;
+ }
+
+ clearSelected(){
+  let artistAndSongCount;
+  let index;
+  let artistAndSongObject;
+
+  if (this.selectedArtist === "") {
+  } else {
+    artistAndSongCount = this.artistsAndSongs.length;
+    for (index = 0; index < artistAndSongCount; index++) {
+      artistAndSongObject = this.artistsAndSongs[index];
+      if (artistAndSongObject.isChecked) {
+        artistAndSongObject.isChecked = false;
+        //toastr.success("", "isChecked: " + artistAndSongObject.songName);
+      }
+    }
+  }
+ }
+
+ filterArtistsAndSongsBySearchValue(){
+  let artistAndSongCount;
+  let index;
+  let searchValue;
+  let artistName;
+  let songName;
+  let foundArtistAndSongArray;
+  let artistAndSongObject;
+  let songFound;
+  
+  this.clearSelected();
+  // if (this.selectedArtist === "") {
+  // } else {
+  //   artistAndSongCount = this.artistsAndSongs.length;
+  //   for (index = 0; index < artistAndSongCount; index++) {
+  //     this.artistsAndSongs[index].isChecked = false;
+  //     toastr.success("", "isChecked: " + index);
+  //   }
+  // }
+
+  this.selectedArtist = "";
+  this.selectedSong = "";
+  this.songs = [];
+  foundArtistAndSongArray = [];
+
+  artistAndSongCount = this.originalArtistsAndSongs.length;
+  searchValue = this.searchValue;
+  if (searchValue) {
+    searchValue = searchValue.toLowerCase();
+  } else {
+    searchValue = "";
+  }
+  for (index = 0; index < artistAndSongCount; index++) {
+    artistAndSongObject = this.originalArtistsAndSongs[index];
+    artistName = artistAndSongObject.artistName;
+    artistName = artistName.toLowerCase();
+    songName = artistAndSongObject.songName;
+    songName = songName.toLowerCase();
+    songFound = false;
+    if (searchValue === "" || artistName.includes(searchValue) === true) {
+      songFound = true;
+    } else {
+      if (songName.includes(searchValue) === true) {
+        songFound = true;
+      }
+    }
+
+    if (songFound) {
+      songFound = false;
+      if (this.rockIsChecked && artistAndSongObject.genre === 1) {
+        songFound = true;
+      } else {
+        if (this.metalIsChecked && artistAndSongObject.genre === 2) {
+          songFound = true;
+        } else {
+          if (this.classicIsChecked && artistAndSongObject.genre === 3) {
+            songFound = true;
+          } else {
+            if (this.oldiesIsChecked && artistAndSongObject.genre === 4) {
+              songFound = true;
+            } else {
+              if (this.countryIsChecked && artistAndSongObject.genre === 5) {
+                songFound = true;
+              } 
+            }
+          }
+        }
+      }
+    }
+
+    if (songFound) {
+      foundArtistAndSongArray.push(artistAndSongObject);
+    }
+  }
+
+  this.artistsAndSongs = foundArtistAndSongArray;
  }
 
  filterArtistsBySearchValue(){
@@ -503,6 +719,13 @@ export class GuitarSolo{
         } else {
           if (songCount > 10) {
             songCount = 10;
+          } else {
+            if (songCount === 2) {
+              //auto select
+              this.selectedSong = "6051";
+              this.songHasFocus = true;
+              //alert('auto select');
+            }
           }
         }
         selectSize = songCount;
@@ -534,6 +757,11 @@ export class GuitarSolo{
 	      this.soloToGuess = response.content.soloToGuessFile.concat(".mp3");
         //alert('this.soloToGuess: ' + this.soloToGuess);
         //this.soloToGuess = "<source type='audio/mpeg' src='solos/" + soloToGuessFile + ".mp3'>";
+        this.rockIsChecked = true;
+        this.metalIsChecked = true;
+        this.classicIsChecked = true;
+        this.oldiesIsChecked = true;
+        this.countryIsChecked = true;
         this.soloToGuessOgg = response.content.soloToGuessFile.concat(".ogg");
         this.soloToGuessId = response.content.soloToGuessId;
         audioElement = document.getElementById("audioElement");

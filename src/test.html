@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Guess the Guitar Solo</title>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="icon" type="image/png" href="http://localhost:9000/src/images/GuessTheGuitarSolo.png">
+  </head>
+  <body>
+      <div class="container">
+          <!--Row with two equal columns-->
+          <div class="row">
+              <div class="col-sm-12">
+                <h4>Guess the Guitar Solo</h4>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-12">
+                  <span>Level 1</span>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-12">
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+                  <button type="button" class="btn btn-xs btn-danger">0</button>
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+                  <button type="button" class="btn btn-xs btn-info">3</button>
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-12">
+                  <span>Level 2</span>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-12">
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+                  <button type="button" class="btn btn-xs btn-danger">0</button>
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+                  <button type="button" class="btn btn-xs btn-info">3</button>
+                  <button type="button" class="btn btn-xs btn-success">7</button>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-12">
+                  <audio controls style="background-color: #95B9C7;">
+                    <source type="audio/ogg" class="au-target" src="http://localhost:9000/solos/16410.mp3">
+                  </audio>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col-xs-2" style="white-space: nowrap;">
+                <input type="checkbox" id="rock">
+                <label for="rock" style="font-size: .8em; vertical-align: middle;">Rock</label>
+              </div>
+              <div class="col-xs-2" style="white-space: nowrap;">
+                  <input type="checkbox" id="metal">
+                  <label for="metal" style="font-size: .8em; vertical-align: middle;">Metal</label>
+              </div>
+              <div class="col-xs-2" style="white-space: nowrap;">
+                  <input type="checkbox" id="classic">
+                  <label for="classic" style="font-size: .8em; vertical-align: middle;">Classic</label>
+              </div>
+              <div class="col-xs-2" style="white-space: nowrap;">
+                  <input type="checkbox" id="oldies">
+                  <label for="oldies" style="font-size: .8em; vertical-align: middle;">Oldies</label>
+              </div>
+              <div class="col-xs-4" style="white-space: nowrap;">
+                  <input type="checkbox" id="country">
+                  <label for="country" style="font-size: .8em; vertical-align: middle;">Country</label>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col-xs-12">
+                <input type="text" placeholder="Search artist or song..">
+                <button class="btn btn-xs glyphicon glyphicon-remove" style="margin-bottom:4px;"></button>
+                <button class="btn btn-xs glyphicon glyphicon-sort-by-alphabet" style="margin-bottom:4px;"></button>
+              </div>
+          </div>
+
+          <div class="row" style="overflow:auto; height: 340px;">
+              <div class="col-xs-10">
+                  <ul class="list-group">
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-xs-3">
+                              <img style="width: 60px; height: 40px;" src="http://localhost:9000/src/images/5020.PNG">
+                            </div>
+                            <div class="col-xs-9">
+                              <description>
+                                <span style="font-size: 14px;">Cold</span>
+                                <br>
+                                <span style="font-size: 12px;">Remedy</span>
+                              </description>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item active">
+                        <div class="row">
+                            <div class="col-xs-3">
+                              <img style="width: 60px; height: 40px;" src="http://localhost:9000/src/images/5024.PNG">
+                            </div>
+                            <div class="col-xs-9">
+                              <description>
+                                <span style="font-size: 14px;">Nirvana</span>
+                                <br>
+                                <span style="font-size: 12px;">Breed</span>
+                              </description>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <div class="row">
+                            <div class="col-xs-3">
+                              <img style="width: 60px; height: 40px;" src="http://localhost:9000/src/images/5034.PNG">
+                            </div>
+                            <div class="col-xs-9">
+                              <description>
+                                <span style="font-size: 14px;">Green Day</span>
+                                <br>
+                                <span style="font-size: 12px;">American Idiot</span>
+                              </description>
+                            </div>
+                        </div>
+                    </li>
+                  </ul>
+              </div>
+              <div class="col-xs-2">
+                  <div class="row">
+                      <div class="col-xs-12">
+                          <button class="btn btn-primary" style="margin-left: -20px; margin-bottom: 4px;">Guess</button>
+                      </div>
+                  </div>
+                  <div class="row" style="margin-top: 20px;">
+                      <div class="col-xs-12">
+                          <button class="btn btn-warning btn-xs" style="margin-left: -20px;">Give up</button>
+                      </div>
+                  </div>
+
+              </div>
+          </div>
+      </div>
+  </body>
+  </html>

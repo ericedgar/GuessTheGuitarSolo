@@ -1,6 +1,6 @@
 <template>
     <section>
-        <h4 class="help-block">${heading}</h4>
+      <h4 class="help-block">${heading}</h4>
 		<div>
 			<p>
 				<h5 class="help-block">${level1LabelText}</h5>
@@ -32,31 +32,77 @@
 						</audio>
 					</div>
 				</div>
+
 				<div class="row">
-					
-					<div class="col-sm-3">
-						<p class="help-block">${artistLabelText}</p>
-						<input type="text" placeholder.bind="searchPlaceholderText" input.trigger="onSearchArtistChanged()" value.two-way="searchValue">
-						<button class="btn btn-warning btn-xs glyphicon glyphicon-remove" innerHTML.bind="clearButtonText" type="button" click.trigger="onClearButtonClicked()" ></button>
-						<button class="btn btn-warning btn-xs glyphicon glyphicon-sort-by-alphabet" innerHTML.bind="sortButtonText" type="button" click.trigger="onSortButtonClicked()" >
-						</button>
-						<select size="13" class="selectpicker" style="min-width:180px;" value.two-way="selectedArtist" change.trigger="onSelectedArtistChanged()">
-						<option repeat.for="artist of artists" value.bind="artist.id">${artist.name}</option>
-						</select>
+				  <div class="col-sm-6 col-md-3">
+						<input type="checkbox" id="rock" value="1" checked.bind="rockIsChecked" change.delegate="onGenreChanged()" />
+						<label for="rock" style="padding-right:8px;font-size: 10px;">${rockLabelText}</label>
+						<input type="checkbox" id="metal" value="2" checked.bind="metalIsChecked" change.delegate="onGenreChanged()" />
+						<label for="metal" style="padding-right:8px;font-size: 10px;">${metalLabelText}</label>
+						<input type="checkbox" id="classic" value="3" checked.bind="classicIsChecked" change.delegate="onGenreChanged()" />
+						<label for="classic" style="padding-right:8px;font-size: 10px;">${classicLabelText}</label>
+						<input type="checkbox" id="oldies" value="4" checked.bind="oldiesIsChecked" change.delegate="onGenreChanged()" />
+						<label for="oldies" style="padding-right:8px;font-size: 10px;">${oldiesLabelText}</label>
+						<input type="checkbox" id="country" value="5" checked.bind="countryIsChecked" change.delegate="onGenreChanged()" />
+						<label for="country" style="font-size: 10px;">${countryLabelText}</label>
+				  </div>
+				</div>
+
+				<div class="row">
+					<div class="col-sm-3" style="min-width: 240px;">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="col-sm-3" style="white-space: nowrap; margin-left: -15px; margin-bottom: 3px;">
+									<input type="text" placeholder.bind="searchPlaceholderText" input.trigger="onSearchArtistChanged()" value.two-way="searchValue">
+									<button class="btn btn-warning btn-xs glyphicon glyphicon-remove" style="margin-bottom:4px;" innerHTML.bind="clearButtonText" type="button" click.trigger="onClearButtonClicked()" ></button>
+									<button class="btn btn-warning btn-xs glyphicon glyphicon-sort-by-alphabet" style="margin-bottom:4px;" innerHTML.bind="sortButtonText" type="button" click.trigger="onSortButtonClicked()" ></button>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" style="overflow:auto; height: 340px;">
+								<ul class="list-group">
+									<li repeat.for="artistAndSong of artistsAndSongs" class="${ artistAndSong.isChecked ? 'list-group-item active' : 'list-group-item' }" 
+									click.trigger="$parent.onListItemClicked2(artistAndSong.key)">
+											<div class="row">
+												<div class="col-sm-4">
+													<img style="width: 100%; height: auto;" src="${artistAndSong.imageUrl}">
+												</div>
+												<div class="col-sm-8">
+													<description>
+														<span style="font-size: 14px;">${artistAndSong.artistName}</span>
+														<br>
+														<span style="font-size: 12px;">${artistAndSong.songName}</span>
+													</description>
+												</div>
+											</div>
+									</li>
+								</ul>
+							</div>
+
+						<div class="row" style="display:none;">
+							<div class="col-sm-6">
+								<select size="13" class="selectpicker" style="min-width:180px;" value.two-way="selectedArtist" change.trigger="onSelectedArtistChanged()">
+								<option repeat.for="artist of artists" value.bind="artist.id">${artist.name}</option>
+								</select>
+							</div>
+						</div>
 					</div>
 					<div class="col-sm-4">
-						<p class="help-block">${songLabelText}</p>
-						<select size.bind="songSelectSize" class="selectpicker" style="min-width:180px;" value.two-way="selectedSong">
+						<p class="help-block" style="margin-bottom: 1px; display:none;">${songLabelText}</p>
+						<select size.bind="songSelectSize" class="selectpicker" style="min-width:180px;display:none;" value.two-way="selectedSong" focus.bind="songHasFocus">
 						<option repeat.for="song of songs" value.bind="song.id">${song.name}</option>
 						</select>
-					</div>
-				</div>
-				<div class="row" style="padding-top:30px;">
-					<div class="col-sm-3">
-						<button type="button" click.trigger="onGiveUpButtonClicked()" disabled.two-way="isButtonsDisabled" class="btn btn-default">${giveUpButtonLabelText}</button>
-					</div>
-					<div class="col-sm-4">
-						<button type="submit" disabled.two-way="isButtonsDisabled" class="btn btn-default">${guessButtonLabelText}</button>					
+						<div class="row" style="padding-top:10px;">
+							<div class="col-sm-3" style="white-space: nowrap; ">
+								<button type="button" click.trigger="onGiveUpButtonClicked(5)" disabled.two-way="isButtonsDisabled" class="btn btn-default" style="margin-right:30px;">${giveUpButtonLabelText}</button>
+							</div>
+						</div>
+						<div class="row" style="padding-top:10px;">
+  						<div class="col-sm-3" style="white-space: nowrap; ">
+								<button type="submit" disabled.two-way="isButtonsDisabled" class="btn btn-default">${guessButtonLabelText}</button>					
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="row hidden" style="padding-top:30px;">
@@ -74,10 +120,43 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-3">
+						Hi Score
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-3">
 						<button type="button" click.trigger="onStartOverButtonClicked()" class="btn btn-default">${startOverButtonLabelText}</button>
 					</div>
 				</div>
 			</div>
         </form>
     </section>
+
+		<div class="row">
+			<div class="col-sm-1">.col-sm-1</div>
+			<div class="col-sm-1">.col-sm-1</div>
+			<div class="col-sm-1">.col-sm-1</div>
+		</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">	
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">${modalTitleText}</h4>
+        </div>
+        <div class="modal-body">
+          <p>${modalMessageText}</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
 </template>

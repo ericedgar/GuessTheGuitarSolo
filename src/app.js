@@ -1,5 +1,6 @@
 import 'bootstrap';
 import 'bootstrap/css/bootstrap.css!';
+import * as toastr from "toastr";
 
 export class App {
   configureRouter(config, router){
